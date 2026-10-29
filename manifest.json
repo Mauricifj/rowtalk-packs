@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "updated_at": "2026-10-29T19:27:40Z",
+  "updated_at": "2026-10-29T20:56:22Z",
   "packs": [
     {
       "id": "dict-en",
@@ -54,6 +54,118 @@
         "name": "OpenWordnet-PT",
         "url": "https://github.com/own-pt/openWordnet-PT/releases/download/v1.1.0/own-pt-2026.04.07.tar.xz",
         "version": "v1.1.0"
+      }
+    },
+    {
+      "id": "wiki-en-essential",
+      "kind": "wiki",
+      "language": "en",
+      "version": 20261025,
+      "sizeBytes": 28998733,
+      "sha256": "56cab6255318f74ed4a16efb932da08c1252e28a1c3f08fbff0be1f5e9b290bf",
+      "url": "https://github.com/Mauricifj/rowtalk-packs/releases/download/wiki-2026.10.25/wiki-en-essential.db.gz",
+      "family": "wiki-en",
+      "tier": "essential",
+      "edition": "2026.10.25",
+      "tag": "wiki-2026.10.25",
+      "schema_version": 2,
+      "fold_version": 1,
+      "encoding": "gzip",
+      "installed_bytes": 68284416,
+      "installed_sha256": "66f72a1eda932ca81344c6666fa4cb1488c273dba8f408871528ee1703aa017a",
+      "article_count": 100000,
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Wikipedia contributors",
+      "source": {
+        "dump_date": "20261025",
+        "site": "https://en.wikipedia.org/",
+        "url": "https://dumps.wikimedia.org/other/cirrus_search_index/20261025/index_name%3Denwiki_content/",
+        "wiki": "enwiki"
+      }
+    },
+    {
+      "id": "wiki-en-extended",
+      "kind": "wiki",
+      "language": "en",
+      "version": 20261025,
+      "sizeBytes": 250292021,
+      "sha256": "91c3b6c02f5cc7a89ffb87d2b58b180503124ac07bcf21528e3c1012f4977ca9",
+      "url": "https://github.com/Mauricifj/rowtalk-packs/releases/download/wiki-2026.10.25/wiki-en-extended.db.gz",
+      "family": "wiki-en",
+      "tier": "extended",
+      "edition": "2026.10.25",
+      "tag": "wiki-2026.10.25",
+      "schema_version": 2,
+      "fold_version": 1,
+      "encoding": "gzip",
+      "installed_bytes": 594681856,
+      "installed_sha256": "332a2764c3e88231bbb7483bbce2e4a867c09e1d07024149d398cd6647748af6",
+      "article_count": 1000000,
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Wikipedia contributors",
+      "source": {
+        "dump_date": "20261025",
+        "site": "https://en.wikipedia.org/",
+        "url": "https://dumps.wikimedia.org/other/cirrus_search_index/20261025/index_name%3Denwiki_content/",
+        "wiki": "enwiki"
+      }
+    },
+    {
+      "id": "wiki-pt-essential",
+      "kind": "wiki",
+      "language": "pt",
+      "version": 20261025,
+      "sizeBytes": 12020349,
+      "sha256": "d91523c21fa77124320fc44b3b1733a8672b7ff482259bb4795bedc7b6b07c1e",
+      "url": "https://github.com/Mauricifj/rowtalk-packs/releases/download/wiki-2026.10.25/wiki-pt-essential.db.gz",
+      "family": "wiki-pt",
+      "tier": "essential",
+      "edition": "2026.10.25",
+      "tag": "wiki-2026.10.25",
+      "schema_version": 2,
+      "fold_version": 1,
+      "encoding": "gzip",
+      "installed_bytes": 29446144,
+      "installed_sha256": "140edaa50ac074171f838e1888fd159f2fa3a9b5c830ffb794ad001cd9020ac2",
+      "article_count": 50000,
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Wikipedia contributors",
+      "source": {
+        "dump_date": "20261025",
+        "site": "https://pt.wikipedia.org/",
+        "url": "https://dumps.wikimedia.org/other/cirrus_search_index/20261025/index_name%3Dptwiki_content/",
+        "wiki": "ptwiki"
+      }
+    },
+    {
+      "id": "wiki-pt-extended",
+      "kind": "wiki",
+      "language": "pt",
+      "version": 20261025,
+      "sizeBytes": 65867059,
+      "sha256": "1637533e3e0ca0bf908189d700c5f76b5c160c09c4ef807ab71cc0bfc2efea9a",
+      "url": "https://github.com/Mauricifj/rowtalk-packs/releases/download/wiki-2026.10.25/wiki-pt-extended.db.gz",
+      "family": "wiki-pt",
+      "tier": "extended",
+      "edition": "2026.10.25",
+      "tag": "wiki-2026.10.25",
+      "schema_version": 2,
+      "fold_version": 1,
+      "encoding": "gzip",
+      "installed_bytes": 160317440,
+      "installed_sha256": "f7704ebe93aaa14a527b40f9f91c5df4fde2a330525c2d95ca6d8be132c69482",
+      "article_count": 300000,
+      "license": "CC BY-SA 4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Wikipedia contributors",
+      "source": {
+        "dump_date": "20261025",
+        "site": "https://pt.wikipedia.org/",
+        "url": "https://dumps.wikimedia.org/other/cirrus_search_index/20261025/index_name%3Dptwiki_content/",
+        "wiki": "ptwiki"
       }
     }
   ]
