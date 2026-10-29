@@ -49,7 +49,7 @@ concurrency:
 
 jobs:
   heartbeat:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
       contents: write # commits the heartbeat line

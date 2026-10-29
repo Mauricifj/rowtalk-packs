@@ -316,6 +316,18 @@ echo "$state"
             for version in re.findall(r'python-version:\s*"([^"]+)"', text):
                 self.assertEqual(version, "3.12", path)
 
+    def test_runner_image_is_pinned(self):
+        # `ubuntu-latest` began moving to Ubuntu 26 on 2026-10-19 (the
+        # first probe's annotation); a scheduled build must not change
+        # operating system — and setup-python's 3.12 build — unannounced.
+        for path in WORKFLOWS:
+            with open(path, "r", encoding="utf-8") as handle:
+                text = handle.read()
+            labels = re.findall(r"^\s*runs-on:\s*(\S+)\s*$", text, re.M)
+            self.assertTrue(labels, path)
+            for label in labels:
+                self.assertEqual(label, "ubuntu-24.04", path)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -59,7 +59,7 @@ env:
 jobs:
   resolve:
     if: ${{ !inputs.rollback_to }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # > dump.listing_retry.run_deadline_s (420 s) + an in-flight listing:
     # no wait sleeps past the deadline and no new listing starts after it,
     # so a flaky or slow dump host ends in a clean DumpError, not a timeout
@@ -102,7 +102,7 @@ jobs:
   build:
     needs: resolve
     if: needs.resolve.outputs.build == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     # enwiki is ~42 GB of bz2 over dump.connections_per_job (2) connections;
     # the probe's go/no-go estimate must stay below this.
     timeout-minutes: 345
@@ -150,7 +150,7 @@ jobs:
     if: >-
       always() && !cancelled() && needs.resolve.result == 'success' &&
       needs.resolve.outputs.build == 'true' && needs.resolve.outputs.release_id != ''
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     permissions:
       contents: write # publishes the release and commits manifest.json
@@ -200,7 +200,7 @@ jobs:
 
   rollback:
     if: ${{ inputs.rollback_to }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
       contents: write
@@ -252,7 +252,7 @@ jobs:
     if: >-
       always() && needs.resolve.outputs.release_id != '' &&
       (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled'))
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       contents: write
