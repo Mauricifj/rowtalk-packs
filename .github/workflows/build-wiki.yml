@@ -1,0 +1,271 @@
+name: build-wiki
+
+# Monthly refresh of the wiki packs (Essential + Extended, pt + en) from the
+# newest complete CirrusSearch dump. See README.md "Publishing" for the
+# invariants; in short:
+#   * packs go into a DRAFT release, are verified asset by asset, and only
+#     then is the release published and manifest.json committed (I2);
+#   * a failed or cancelled run deletes its own draft (cleanup job) and
+#     never touches manifest.json;
+#   * languages are independent: a language whose build failed (e.g. enwiki
+#     ran out of time) is skipped and the others are still published; the
+#     run stays red (OPS-3);
+#   * at most two dump connections per run (build jobs run one at a time,
+#     max-parallel: 1, each with dump.connections_per_job = 2 downloaders)
+#     and every job has a timeout (I3).
+
+on:
+  schedule:
+    # Off the hour (scheduled runs are delayed at :00); the 3rd of each month.
+    - cron: "17 4 3 * *"
+  workflow_dispatch:
+    inputs:
+      dump_date:
+        description: Dump date YYYYMMDD (empty = latest complete for every language)
+        type: string
+        default: ""
+      langs:
+        description: Languages (comma-separated)
+        type: string
+        default: "pt,en"
+      tiers:
+        description: Tiers (comma-separated)
+        type: string
+        default: "essential,extended"
+      force:
+        description: Publish even if the sanity gate (golden queries / size drift) fails
+        type: boolean
+        default: false
+      dry_run:
+        description: Build and validate only; create no release, publish nothing (with rollback_to, verify the target and show the manifest change, commit nothing)
+        type: boolean
+        default: false
+      rollback_to:
+        description: Re-point the manifest at this kept edition tag (wiki-YYYY.MM.DD) and build nothing
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  # Shared with build-dict: only one run may write releases / manifest.json.
+  group: rowtalk-packs-publish
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  resolve:
+    if: ${{ !inputs.rollback_to }}
+    runs-on: ubuntu-latest
+    # > dump.listing_retry.run_deadline_s (420 s) + an in-flight listing:
+    # no wait sleeps past the deadline and no new listing starts after it,
+    # so a flaky or slow dump host ends in a clean DumpError, not a timeout
+    # kill (OPS3-02/OPS4-03; pinned by test_a_whole_scan_waits_at_most_the_
+    # run_deadline and test_no_listing_request_starts_after_the_run_deadline).
+    timeout-minutes: 10
+    permissions:
+      contents: write # creates the draft release
+    outputs:
+      build: ${{ steps.resolve.outputs.build }}
+      date: ${{ steps.resolve.outputs.date }}
+      tag: ${{ steps.resolve.outputs.tag }}
+      langs: ${{ steps.resolve.outputs.langs }}
+      release_id: ${{ steps.resolve.outputs.release_id }}
+    steps:
+      - name: Refuse to publish from a ref other than main
+        # OPS-2: a non-dry-run decides which releases are orphans; it must
+        # run main's code against main's manifest. Test branches: dry_run.
+        if: ${{ !inputs.dry_run && github.ref != 'refs/heads/main' }}
+        run: |
+          echo "::error::publishing runs only from main (this run: $GITHUB_REF); dispatch with dry_run to test a branch"
+          exit 1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Resolve dump and prepare draft release
+        id: resolve
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DUMP_DATE: ${{ inputs.dump_date }}
+          LANGS: ${{ inputs.langs || 'pt,en' }}
+          FORCE: ${{ inputs.force && '--force' || '' }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          python -m rowtalk_packs resolve-wiki --langs "$LANGS" --date "$DUMP_DATE" $FORCE $DRY_RUN
+
+  build:
+    needs: resolve
+    if: needs.resolve.outputs.build == 'true'
+    runs-on: ubuntu-latest
+    # enwiki is ~42 GB of bz2 over dump.connections_per_job (2) connections;
+    # the probe's go/no-go estimate must stay below this.
+    timeout-minutes: 345
+    permissions:
+      contents: write # uploads assets to the draft release
+    strategy:
+      # One language failing must not cancel the other (OPS-3); one job at a
+      # time keeps the run at 2 dump connections (I3).
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        lang: ${{ fromJSON(needs.resolve.outputs.langs) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Free disk if needed
+        run: |
+          avail=$(df --output=avail -BG / | tail -n 1 | tr -dc '0-9')
+          echo "available: ${avail}G"
+          if [ "$avail" -lt 20 ]; then
+            sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+            df -h /
+          fi
+      - name: Build, validate, gate, upload
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LANG_CODE: ${{ matrix.lang }}
+          DUMP_DATE: ${{ needs.resolve.outputs.date }}
+          TIERS: ${{ inputs.tiers || 'essential,extended' }}
+          RELEASE_ID: ${{ needs.resolve.outputs.release_id }}
+          FORCE: ${{ inputs.force && '--force' || '' }}
+        run: |
+          python -m rowtalk_packs build-wiki --lang "$LANG_CODE" --date "$DUMP_DATE" \
+            --tiers "$TIERS" --out "$RUNNER_TEMP/out" --work "$RUNNER_TEMP/work" \
+            --release-id "$RELEASE_ID" $FORCE
+
+  publish:
+    needs: [resolve, build]
+    # Runs even when a build leg failed: publish-wiki publishes the languages
+    # whose packs are complete and verified, and skips the rest (OPS-3).
+    if: >-
+      always() && !cancelled() && needs.resolve.result == 'success' &&
+      needs.resolve.outputs.build == 'true' && needs.resolve.outputs.release_id != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write # publishes the release and commits manifest.json
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Verify assets, publish release, write manifest
+        id: publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID: ${{ needs.resolve.outputs.release_id }}
+          LANGS: ${{ join(fromJSON(needs.resolve.outputs.langs), ',') }}
+          TIERS: ${{ inputs.tiers || 'essential,extended' }}
+          FORCE: ${{ inputs.force && '--force' || '' }}
+        run: |
+          python -m rowtalk_packs publish-wiki --release-id "$RELEASE_ID" --langs "$LANGS" \
+            --tiers "$TIERS" $FORCE
+      - name: Commit manifest and editions log
+        env:
+          TAG: ${{ needs.resolve.outputs.tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json editions
+          git commit -m "chore(packs): publish wiki edition ${TAG}"
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 10))
+          done
+          exit 1
+      - name: Prune old releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m rowtalk_packs prune
+      - name: Fail if a language was skipped
+        # After the commit: what was verified is published; the run stays red.
+        if: steps.publish.outputs.skipped != ''
+        env:
+          SKIPPED: ${{ steps.publish.outputs.skipped }}
+        run: |
+          echo "::error::not published this run: $SKIPPED (see the build and publish logs)"
+          exit 1
+
+  rollback:
+    if: ${{ inputs.rollback_to }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - name: Refuse to publish from a ref other than main
+        # OPS-2: a non-dry-run decides which releases are orphans; it must
+        # run main's code against main's manifest. Test branches: dry_run.
+        if: ${{ !inputs.dry_run && github.ref != 'refs/heads/main' }}
+        run: |
+          echo "::error::publishing runs only from main (this run: $GITHUB_REF); dispatch with dry_run to test a branch"
+          exit 1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Re-point manifest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.rollback_to }}
+          LANGS: ${{ inputs.langs }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          families=$(echo "$LANGS" | tr -d ' ' | sed 's/\([a-z]*\)/wiki-\1/g')
+          python -m rowtalk_packs rollback --tag "$TAG" --families "$families" $DRY_RUN
+      - name: Commit manifest and editions log
+        # OPS2-01: a dry-run rollback verifies and shows the change; it never
+        # commits (the CLI wrote nothing, and this step does not run).
+        if: ${{ !inputs.dry_run }}
+        env:
+          TAG: ${{ inputs.rollback_to }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json editions
+          git commit -m "chore(packs): roll wiki back to ${TAG}"
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 10))
+          done
+          exit 1
+
+  cleanup:
+    # A failed or cancelled run removes its own draft (or its published but
+    # never-committed orphan). It never deletes a release manifest.json on
+    # main names.
+    needs: [resolve, build, publish]
+    if: >-
+      always() && needs.resolve.outputs.release_id != '' &&
+      (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Delete this run's draft
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID: ${{ needs.resolve.outputs.release_id }}
+        run: python -m rowtalk_packs cleanup --release-ids "$RELEASE_ID"
+

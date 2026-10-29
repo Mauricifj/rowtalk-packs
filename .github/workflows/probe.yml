@@ -1,0 +1,59 @@
+name: probe
+
+# Streams a few shards of the real CirrusSearch dump and writes a markdown
+# report (line shape, field presence, popularity, throughput, extrapolated
+# pack sizes) to the job summary. Read-only; publishes nothing. Run it
+# FIRST, before any build: the new sharded dump's exact shape is unverified.
+
+on:
+  workflow_dispatch:
+    inputs:
+      wiki:
+        description: Wiki to probe
+        type: choice
+        options: [ptwiki, enwiki]
+        default: ptwiki
+      shards:
+        # SPEC default 1. With 1 shard the go/no-go network figure is the
+        # single-connection rate (conservative: extra connections assumed to
+        # add nothing); 2+ shards MEASURE two concurrent downloads (OPS2-03).
+        description: Number of shards to stream (1-4; each is ~640 MB of bz2; 2+ measures concurrency)
+        type: string
+        default: "1"
+      dump_date:
+        description: Dump date YYYYMMDD (empty = latest complete)
+        type: string
+        default: ""
+      dump_base:
+        description: Dump base URL (empty = dumps.wikimedia.org; mirror allowed)
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: probe
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Probe
+        env:
+          WIKI: ${{ inputs.wiki }}
+          SHARDS: ${{ inputs.shards }}
+          DUMP_DATE: ${{ inputs.dump_date }}
+          DUMP_BASE: ${{ inputs.dump_base }}
+        run: |
+          case "$SHARDS" in 1|2|3|4) ;; *) echo "shards must be 1-4"; exit 1;; esac
+          python -m rowtalk_packs probe --wiki "$WIKI" --shards "$SHARDS" \
+            --date "$DUMP_DATE" --dump-base "$DUMP_BASE" --work "$RUNNER_TEMP"

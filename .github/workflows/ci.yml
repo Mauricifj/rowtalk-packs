@@ -1,0 +1,39 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # FR5-02: unbuffered, so test.log is in time order and its tail ends with
+  # unittest's verdict (buffered stdout from the probe tests is otherwise
+  # flushed at exit, AFTER "Ran N tests").
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Unit tests
+        # The test command runs bare with its output redirected to a file; its
+        # own exit status is the verdict (a pipe would launder it). A red run
+        # prints the whole log (every traceback), a green one its tail.
+        run: |
+          status=0
+          python -m unittest discover -s tests -t . -v > test.log 2>&1 || status=$?
+          if [ "$status" -ne 0 ]; then cat test.log; else tail -n 60 test.log; fi
+          exit "$status"

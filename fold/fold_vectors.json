@@ -1,0 +1,1376 @@
+{
+ "fold_version": 1,
+ "description": "fold_v1 parity corpus. Every implementation of fold_v1 (builder and app) must map each 'in' to exactly 'out'. Expected outputs were authored by hand.",
+ "cases": [
+  {
+   "in": "",
+   "out": "",
+   "note": "empty"
+  },
+  {
+   "in": " ",
+   "out": "",
+   "note": "single space"
+  },
+  {
+   "in": "   ",
+   "out": "",
+   "note": "spaces only"
+  },
+  {
+   "in": "\t\n\r",
+   "out": "",
+   "note": "ascii whitespace only"
+  },
+  {
+   "in": "\u00a0",
+   "out": "",
+   "note": "NBSP only"
+  },
+  {
+   "in": "a  b",
+   "out": "a b",
+   "note": "double space collapses"
+  },
+  {
+   "in": "  a   b  ",
+   "out": "a b",
+   "note": "trim + collapse"
+  },
+  {
+   "in": "a\tb",
+   "out": "a b",
+   "note": "tab separates"
+  },
+  {
+   "in": "a\nb",
+   "out": "a b",
+   "note": "newline separates"
+  },
+  {
+   "in": "a\u00a0b",
+   "out": "a b",
+   "note": "NBSP separates"
+  },
+  {
+   "in": "a\u2009b",
+   "out": "a b",
+   "note": "thin space"
+  },
+  {
+   "in": "a\u202fb",
+   "out": "a b",
+   "note": "narrow NBSP"
+  },
+  {
+   "in": "a\u3000b",
+   "out": "a b",
+   "note": "ideographic space"
+  },
+  {
+   "in": "a\u2028b",
+   "out": "a b",
+   "note": "line separator"
+  },
+  {
+   "in": "a\u200bb",
+   "out": "ab",
+   "note": "zero width space dropped"
+  },
+  {
+   "in": "a\u00adb",
+   "out": "ab",
+   "note": "soft hyphen dropped"
+  },
+  {
+   "in": "\ufeffabc",
+   "out": "abc",
+   "note": "BOM dropped"
+  },
+  {
+   "in": "a\u200eb\u200f",
+   "out": "ab",
+   "note": "LRM/RLM dropped"
+  },
+  {
+   "in": " \u00a0 x \u2003 ",
+   "out": "x",
+   "note": "mixed whitespace runs"
+  },
+  {
+   "in": "ABC",
+   "out": "abc",
+   "note": "ascii upper"
+  },
+  {
+   "in": "Hello World",
+   "out": "hello world",
+   "note": "ascii mixed"
+  },
+  {
+   "in": "hello",
+   "out": "hello",
+   "note": "already folded"
+  },
+  {
+   "in": "iPhone",
+   "out": "iphone",
+   "note": "camel"
+  },
+  {
+   "in": "NASA",
+   "out": "nasa",
+   "note": "acronym"
+  },
+  {
+   "in": "S\u00e3o Paulo",
+   "out": "sao paulo",
+   "note": "pt accents"
+  },
+  {
+   "in": "Bras\u00edlia",
+   "out": "brasilia",
+   "note": "pt accents"
+  },
+  {
+   "in": "Cear\u00e1",
+   "out": "ceara",
+   "note": "pt accents"
+  },
+  {
+   "in": "Paran\u00e1",
+   "out": "parana",
+   "note": "pt accents"
+  },
+  {
+   "in": "Maranh\u00e3o",
+   "out": "maranhao",
+   "note": "pt accents"
+  },
+  {
+   "in": "Par\u00e1",
+   "out": "para",
+   "note": "pt accents"
+  },
+  {
+   "in": "Goi\u00e1s",
+   "out": "goias",
+   "note": "pt accents"
+  },
+  {
+   "in": "Piau\u00ed",
+   "out": "piaui",
+   "note": "pt accents"
+  },
+  {
+   "in": "Amap\u00e1",
+   "out": "amapa",
+   "note": "pt accents"
+  },
+  {
+   "in": "Florian\u00f3polis",
+   "out": "florianopolis",
+   "note": "pt accents"
+  },
+  {
+   "in": "Jo\u00e3o",
+   "out": "joao",
+   "note": "pt accents"
+  },
+  {
+   "in": "Jos\u00e9",
+   "out": "jose",
+   "note": "pt accents"
+  },
+  {
+   "in": "cora\u00e7\u00e3o",
+   "out": "coracao",
+   "note": "pt accents"
+  },
+  {
+   "in": "cora\u00e7\u00f5es",
+   "out": "coracoes",
+   "note": "pt accents"
+  },
+  {
+   "in": "a\u00e7\u00e3o",
+   "out": "acao",
+   "note": "pt accents"
+  },
+  {
+   "in": "informa\u00e7\u00e3o",
+   "out": "informacao",
+   "note": "pt accents"
+  },
+  {
+   "in": "p\u00e3o",
+   "out": "pao",
+   "note": "pt accents"
+  },
+  {
+   "in": "m\u00e3e",
+   "out": "mae",
+   "note": "pt accents"
+  },
+  {
+   "in": "p\u00f5e",
+   "out": "poe",
+   "note": "pt accents"
+  },
+  {
+   "in": "li\u00e7\u00f5es",
+   "out": "licoes",
+   "note": "pt accents"
+  },
+  {
+   "in": "a\u00e7\u00facar",
+   "out": "acucar",
+   "note": "pt accents"
+  },
+  {
+   "in": "\u00c7",
+   "out": "c",
+   "note": "pt accents"
+  },
+  {
+   "in": "\u00e7",
+   "out": "c",
+   "note": "pt accents"
+  },
+  {
+   "in": "\u00c3",
+   "out": "a",
+   "note": "pt accents"
+  },
+  {
+   "in": "\u00d5",
+   "out": "o",
+   "note": "pt accents"
+  },
+  {
+   "in": "\u00e0",
+   "out": "a",
+   "note": "pt accents"
+  },
+  {
+   "in": "\u00c0s",
+   "out": "as",
+   "note": "pt accents"
+  },
+  {
+   "in": "av\u00f4",
+   "out": "avo",
+   "note": "pt accents"
+  },
+  {
+   "in": "av\u00f3",
+   "out": "avo",
+   "note": "pt accents"
+  },
+  {
+   "in": "p\u00eassego",
+   "out": "pessego",
+   "note": "pt accents"
+  },
+  {
+   "in": "\u00c1\u00c9\u00cd\u00d3\u00da",
+   "out": "aeiou",
+   "note": "pt accents"
+  },
+  {
+   "in": "\u00e2\u00ea\u00f4",
+   "out": "aeo",
+   "note": "pt accents"
+  },
+  {
+   "in": "\u00fc",
+   "out": "u",
+   "note": "pt accents"
+  },
+  {
+   "in": "ling\u00fci\u00e7a",
+   "out": "linguica",
+   "note": "pt accents"
+  },
+  {
+   "in": "Ribeir\u00e3o Preto",
+   "out": "ribeirao preto",
+   "note": "pt accents"
+  },
+  {
+   "in": "Guarulhos",
+   "out": "guarulhos",
+   "note": "pt accents"
+  },
+  {
+   "in": "caf\u00e9",
+   "out": "cafe",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "na\u00efve",
+   "out": "naive",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "r\u00e9sum\u00e9",
+   "out": "resume",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "Z\u00fcrich",
+   "out": "zurich",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u00c5ngstr\u00f6m",
+   "out": "angstrom",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "Dvo\u0159\u00e1k",
+   "out": "dvorak",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "Krak\u00f3w",
+   "out": "krakow",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u0141\u00f3d\u017a",
+   "out": "lodz",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u00c6r\u00f8sk\u00f8bing",
+   "out": "aeroskobing",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u00d8resund",
+   "out": "oresund",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u0152uvre",
+   "out": "oeuvre",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "c\u0153ur",
+   "out": "coeur",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u00c6sir",
+   "out": "aesir",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u00de\u00f3r",
+   "out": "thor",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u00d0o\u00e0n",
+   "out": "doan",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u0110\u00e0 N\u1eb5ng",
+   "out": "da nang",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "H\u00e0 N\u1ed9i",
+   "out": "ha noi",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "Vi\u1ec7t Nam",
+   "out": "viet nam",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u00f1and\u00fa",
+   "out": "nandu",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "Espa\u00f1a",
+   "out": "espana",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "Malm\u00f6",
+   "out": "malmo",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u015ei\u015fli",
+   "out": "sisli",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u0126amrun",
+   "out": "hamrun",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "\u01c5emal",
+   "out": "dzemal",
+   "note": "latin diacritics and letters"
+  },
+  {
+   "in": "Stra\u00dfe",
+   "out": "strasse",
+   "note": "sharp s"
+  },
+  {
+   "in": "STRASSE",
+   "out": "strasse",
+   "note": "upper SS"
+  },
+  {
+   "in": "\u1e9e",
+   "out": "ss",
+   "note": "capital sharp s"
+  },
+  {
+   "in": "Ma\u00df",
+   "out": "mass",
+   "note": "sharp s final"
+  },
+  {
+   "in": "Fu\u00dfball",
+   "out": "fussball",
+   "note": "sharp s middle"
+  },
+  {
+   "in": "\u0130stanbul",
+   "out": "istanbul",
+   "note": "dotted capital I"
+  },
+  {
+   "in": "\u0131",
+   "out": "i",
+   "note": "dotless i"
+  },
+  {
+   "in": "I\u0131",
+   "out": "ii",
+   "note": "I and dotless i"
+  },
+  {
+   "in": "D\u0130YARBAKIR",
+   "out": "diyarbakir",
+   "note": "turkish caps"
+  },
+  {
+   "in": "\u0131\u0130iI",
+   "out": "iiii",
+   "note": "all four i forms"
+  },
+  {
+   "in": "i\u0307",
+   "out": "i",
+   "note": "i + combining dot above"
+  },
+  {
+   "in": "\ufb01nal",
+   "out": "final",
+   "note": "fi ligature"
+  },
+  {
+   "in": "\ufb02ow",
+   "out": "flow",
+   "note": "fl ligature"
+  },
+  {
+   "in": "\ufb00",
+   "out": "ff",
+   "note": "ff ligature"
+  },
+  {
+   "in": "\ufb03",
+   "out": "ffi",
+   "note": "ffi ligature"
+  },
+  {
+   "in": "\ufb06",
+   "out": "st",
+   "note": "st ligature"
+  },
+  {
+   "in": "\u0132ssel",
+   "out": "ijssel",
+   "note": "IJ digraph"
+  },
+  {
+   "in": "\u0149",
+   "out": "n",
+   "note": "n preceded by apostrophe"
+  },
+  {
+   "in": "\u01c4",
+   "out": "dz",
+   "note": "DZ caron digraph"
+  },
+  {
+   "in": "\uff21\uff22\uff23",
+   "out": "abc",
+   "note": "fullwidth latin upper"
+  },
+  {
+   "in": "\uff41\uff42\uff43",
+   "out": "abc",
+   "note": "fullwidth latin lower"
+  },
+  {
+   "in": "\uff11\uff12\uff13",
+   "out": "123",
+   "note": "fullwidth digits"
+  },
+  {
+   "in": "\uff34\uff4f\uff4b\uff59\uff4f\u3000\uff12\uff10\uff12\uff10",
+   "out": "tokyo 2020",
+   "note": "fullwidth words + ideographic space"
+  },
+  {
+   "in": "\uff21\uff34\uff06\uff34",
+   "out": "at&t",
+   "note": "fullwidth ampersand kept"
+  },
+  {
+   "in": "\uff76\uff80\uff76\uff85",
+   "out": "\u30ab\u30bf\u30ab\u30ca",
+   "note": "halfwidth katakana to fullwidth"
+  },
+  {
+   "in": "\uff08\uff54\uff45\uff53\uff54\uff09",
+   "out": "test",
+   "note": "fullwidth parentheses"
+  },
+  {
+   "in": "O'Brien",
+   "out": "obrien",
+   "note": "straight apostrophe joins"
+  },
+  {
+   "in": "O\u2019Brien",
+   "out": "obrien",
+   "note": "curly apostrophe joins"
+  },
+  {
+   "in": "O\u2018Brien",
+   "out": "obrien",
+   "note": "left single quote joins"
+  },
+  {
+   "in": "Rock 'n' roll",
+   "out": "rock n roll",
+   "note": "apostrophes around n"
+  },
+  {
+   "in": "Hawai\u02bbi",
+   "out": "hawaii",
+   "note": "okina joins"
+  },
+  {
+   "in": "don`t",
+   "out": "dont",
+   "note": "grave accent joins"
+  },
+  {
+   "in": "l'\u00e9t\u00e9",
+   "out": "lete",
+   "note": "french elision"
+  },
+  {
+   "in": "d\u2019\u00c1vila",
+   "out": "davila",
+   "note": "pt elision curly"
+  },
+  {
+   "in": "C\u00f4te d'Ivoire",
+   "out": "cote divoire",
+   "note": "elision in country"
+  },
+  {
+   "in": "Mother\u2019s Day",
+   "out": "mothers day",
+   "note": "possessive"
+  },
+  {
+   "in": "Rio-de-Janeiro",
+   "out": "rio de janeiro",
+   "note": "hyphen separates"
+  },
+  {
+   "in": "Santos-Dumont",
+   "out": "santos dumont",
+   "note": "hyphenated surname"
+  },
+  {
+   "in": "e-mail",
+   "out": "e mail",
+   "note": "hyphen word"
+  },
+  {
+   "in": "1939\u20131945",
+   "out": "1939 1945",
+   "note": "en dash"
+  },
+  {
+   "in": "A \u2014 B",
+   "out": "a b",
+   "note": "em dash"
+  },
+  {
+   "in": "x\u2010y",
+   "out": "x y",
+   "note": "unicode hyphen"
+  },
+  {
+   "in": "x\u2011y",
+   "out": "x y",
+   "note": "non-breaking hyphen"
+  },
+  {
+   "in": "a\u2212b",
+   "out": "a\u2212b",
+   "note": "minus sign is a math symbol, kept"
+  },
+  {
+   "in": "x--y",
+   "out": "x y",
+   "note": "double hyphen"
+  },
+  {
+   "in": "-leading",
+   "out": "leading",
+   "note": "leading hyphen"
+  },
+  {
+   "in": "Mercury (planet)",
+   "out": "mercury planet",
+   "note": "parenthetical"
+  },
+  {
+   "in": "Paris (mythology)",
+   "out": "paris mythology",
+   "note": "parenthetical 2"
+  },
+  {
+   "in": "Java [language]",
+   "out": "java language",
+   "note": "brackets"
+  },
+  {
+   "in": "{x}",
+   "out": "x",
+   "note": "braces"
+  },
+  {
+   "in": "()",
+   "out": "",
+   "note": "empty parens"
+  },
+  {
+   "in": "( )",
+   "out": "",
+   "note": "spaced parens"
+  },
+  {
+   "in": "a(b)c",
+   "out": "a b c",
+   "note": "inner parens"
+  },
+  {
+   "in": "E.U.A.",
+   "out": "eua",
+   "note": "pt acronym with dots"
+  },
+  {
+   "in": "U.S.A.",
+   "out": "usa",
+   "note": "acronym with dots"
+  },
+  {
+   "in": "U.S.",
+   "out": "us",
+   "note": "short acronym"
+  },
+  {
+   "in": "St. Louis",
+   "out": "st louis",
+   "note": "abbreviation + space"
+  },
+  {
+   "in": "Dr.No",
+   "out": "drno",
+   "note": "dot joins"
+  },
+  {
+   "in": "3.14",
+   "out": "314",
+   "note": "decimal point joins digits"
+  },
+  {
+   "in": "www.example.com",
+   "out": "wwwexamplecom",
+   "note": "domain dots join"
+  },
+  {
+   "in": "...",
+   "out": "",
+   "note": "ellipsis dots"
+  },
+  {
+   "in": "\u2026",
+   "out": "",
+   "note": "ellipsis char"
+  },
+  {
+   "in": "Wait\u2026what",
+   "out": "wait what",
+   "note": "ellipsis character separates (Po, not a joiner)"
+  },
+  {
+   "in": "l\u00b7l",
+   "out": "ll",
+   "note": "catalan middle dot"
+  },
+  {
+   "in": "a\uff0eb",
+   "out": "ab",
+   "note": "fullwidth full stop"
+  },
+  {
+   "in": "Hello, World!",
+   "out": "hello world",
+   "note": "comma and bang"
+  },
+  {
+   "in": "What?",
+   "out": "what",
+   "note": "question mark"
+  },
+  {
+   "in": "\u00bfQu\u00e9?",
+   "out": "que",
+   "note": "inverted question"
+  },
+  {
+   "in": "\u00a1Hola!",
+   "out": "hola",
+   "note": "inverted exclamation"
+  },
+  {
+   "in": "a/b",
+   "out": "a b",
+   "note": "slash"
+  },
+  {
+   "in": "AC/DC",
+   "out": "ac dc",
+   "note": "band slash"
+  },
+  {
+   "in": "a_b",
+   "out": "a b",
+   "note": "underscore"
+  },
+  {
+   "in": "x:y;z",
+   "out": "x y z",
+   "note": "colon semicolon"
+  },
+  {
+   "in": "\"quoted\"",
+   "out": "quoted",
+   "note": "straight double quotes"
+  },
+  {
+   "in": "\u201cquoted\u201d",
+   "out": "quoted",
+   "note": "curly double quotes"
+  },
+  {
+   "in": "\u00abaspas\u00bb",
+   "out": "aspas",
+   "note": "guillemets"
+  },
+  {
+   "in": "\u201elow\u201c",
+   "out": "low",
+   "note": "low double quote"
+  },
+  {
+   "in": "C#",
+   "out": "c#",
+   "note": "hash kept"
+  },
+  {
+   "in": "AT&T",
+   "out": "at&t",
+   "note": "ampersand kept"
+  },
+  {
+   "in": "Tom & Jerry",
+   "out": "tom & jerry",
+   "note": "spaced ampersand kept"
+  },
+  {
+   "in": "100%",
+   "out": "100%",
+   "note": "percent kept"
+  },
+  {
+   "in": "user@host",
+   "out": "user@host",
+   "note": "at kept"
+  },
+  {
+   "in": "C++",
+   "out": "c++",
+   "note": "plus kept (math symbol)"
+  },
+  {
+   "in": "$100",
+   "out": "$100",
+   "note": "dollar kept (currency)"
+  },
+  {
+   "in": "\u20ac5",
+   "out": "\u20ac5",
+   "note": "euro kept"
+  },
+  {
+   "in": "a*b",
+   "out": "a b",
+   "note": "asterisk separates"
+  },
+  {
+   "in": "a~b",
+   "out": "a~b",
+   "note": "tilde is a math symbol, kept"
+  },
+  {
+   "in": "^caret",
+   "out": "caret",
+   "note": "circumflex accent symbol dropped"
+  },
+  {
+   "in": "\u00a8x",
+   "out": "x",
+   "note": "diaeresis symbol dropped"
+  },
+  {
+   "in": "\u00a712",
+   "out": "12",
+   "note": "section sign separates"
+  },
+  {
+   "in": "#1",
+   "out": "#1",
+   "note": "hash digit"
+  },
+  {
+   "in": "!!!",
+   "out": "",
+   "note": "only punctuation"
+  },
+  {
+   "in": "0123456789",
+   "out": "0123456789",
+   "note": "ascii digits"
+  },
+  {
+   "in": "\u0660\u0661\u0662\u0663\u0664\u0665\u0666\u0667\u0668\u0669",
+   "out": "0123456789",
+   "note": "arabic-indic digits"
+  },
+  {
+   "in": "\u06f1\u06f2\u06f3",
+   "out": "123",
+   "note": "extended arabic-indic digits"
+  },
+  {
+   "in": "\u0967\u0968\u0969",
+   "out": "123",
+   "note": "devanagari digits"
+  },
+  {
+   "in": "\u00b2",
+   "out": "2",
+   "note": "superscript two"
+  },
+  {
+   "in": "H\u2082O",
+   "out": "h2o",
+   "note": "subscript two"
+  },
+  {
+   "in": "\u00bd",
+   "out": "1\u20442",
+   "note": "vulgar fraction keeps fraction slash"
+  },
+  {
+   "in": "\u2460\u2461",
+   "out": "12",
+   "note": "circled digits"
+  },
+  {
+   "in": "\u216b",
+   "out": "xii",
+   "note": "roman numeral twelve"
+  },
+  {
+   "in": "\u2173",
+   "out": "iv",
+   "note": "small roman numeral four"
+  },
+  {
+   "in": "2001: A Space Odyssey",
+   "out": "2001 a space odyssey",
+   "note": "title with digits"
+  },
+  {
+   "in": "1984",
+   "out": "1984",
+   "note": "year"
+  },
+  {
+   "in": "\u2122",
+   "out": "tm",
+   "note": "trademark"
+  },
+  {
+   "in": "\u2103",
+   "out": "\u00b0c",
+   "note": "degree celsius"
+  },
+  {
+   "in": "\u21165",
+   "out": "no5",
+   "note": "numero sign"
+  },
+  {
+   "in": "\u03a9",
+   "out": "\u03c9",
+   "note": "ohm sign"
+  },
+  {
+   "in": "K",
+   "out": "k",
+   "note": "kelvin sign"
+  },
+  {
+   "in": "\u00c5",
+   "out": "a",
+   "note": "angstrom sign"
+  },
+  {
+   "in": "\u210c",
+   "out": "h",
+   "note": "black-letter H"
+  },
+  {
+   "in": "\ud835\udc00\ud835\udc01\ud835\udc02",
+   "out": "abc",
+   "note": "math bold"
+  },
+  {
+   "in": "\ud835\udd38",
+   "out": "a",
+   "note": "double-struck A"
+  },
+  {
+   "in": "\u24b6",
+   "out": "a",
+   "note": "circled A"
+  },
+  {
+   "in": "\u339e",
+   "out": "km",
+   "note": "square km"
+  },
+  {
+   "in": "\ud83d\ude00",
+   "out": "\ud83d\ude00",
+   "note": "emoji passes"
+  },
+  {
+   "in": "I \u2764\ufe0f NY",
+   "out": "i \u2764 ny",
+   "note": "VS16 dropped"
+  },
+  {
+   "in": "\u2764",
+   "out": "\u2764",
+   "note": "heart without VS"
+  },
+  {
+   "in": "\ud83d\udc4d\ud83c\udffd",
+   "out": "\ud83d\udc4d",
+   "note": "emoji skin tone modifier (Sk) dropped"
+  },
+  {
+   "in": "\ud83d\udc68\u200d\ud83d\udc69\u200d\ud83d\udc67",
+   "out": "\ud83d\udc68\ud83d\udc69\ud83d\udc67",
+   "note": "ZWJ dropped"
+  },
+  {
+   "in": "\ud83c\udde7\ud83c\uddf7",
+   "out": "\ud83c\udde7\ud83c\uddf7",
+   "note": "flag regional indicators kept"
+  },
+  {
+   "in": "1\ufe0f\u20e3",
+   "out": "1",
+   "note": "keycap sequence"
+  },
+  {
+   "in": "\u2615 coffee",
+   "out": "\u2615 coffee",
+   "note": "symbol + word"
+  },
+  {
+   "in": "\u6771\u4eac",
+   "out": "\u6771\u4eac",
+   "note": "kanji pass"
+  },
+  {
+   "in": "\u5317\u4eac\u5e02",
+   "out": "\u5317\u4eac\u5e02",
+   "note": "hanzi pass"
+  },
+  {
+   "in": "\u3072\u3089\u304c\u306a",
+   "out": "\u3072\u3089\u304c\u306a",
+   "note": "hiragana pass"
+  },
+  {
+   "in": "\u30ab\u30bf\u30ab\u30ca",
+   "out": "\u30ab\u30bf\u30ab\u30ca",
+   "note": "katakana pass"
+  },
+  {
+   "in": "\u304c",
+   "out": "\u304c",
+   "note": "precomposed voiced kana kept"
+  },
+  {
+   "in": "\u30b8\u30e7\u30f3\u30fb\u30b9\u30df\u30b9",
+   "out": "\u30b8\u30e7\u30f3 \u30b9\u30df\u30b9",
+   "note": "katakana middle dot separates"
+  },
+  {
+   "in": "\u6771\u4eac\u3001\u5927\u962a\u3002",
+   "out": "\u6771\u4eac \u5927\u962a",
+   "note": "ideographic comma and full stop"
+  },
+  {
+   "in": "\u300c\u6771\u4eac\u300d",
+   "out": "\u6771\u4eac",
+   "note": "corner brackets"
+  },
+  {
+   "in": "\ud55c\uad6d\uc5b4",
+   "out": "\ud55c\uad6d\uc5b4",
+   "note": "hangul syllables pass"
+  },
+  {
+   "in": "\uf900",
+   "out": "\u8c48",
+   "note": "CJK compatibility ideograph to unified"
+  },
+  {
+   "in": "\u05e9\u05dc\u05d5\u05dd",
+   "out": "\u05e9\u05dc\u05d5\u05dd",
+   "note": "hebrew pass"
+  },
+  {
+   "in": "\u05e9\u05b8\u05c1\u05dc\u05d5\u05b9\u05dd",
+   "out": "\u05e9\u05dc\u05d5\u05dd",
+   "note": "hebrew niqqud stripped"
+  },
+  {
+   "in": "\u0645\u0631\u062d\u0628\u0627",
+   "out": "\u0645\u0631\u062d\u0628\u0627",
+   "note": "arabic pass"
+  },
+  {
+   "in": "\u0645\u064e\u0631\u0652\u062d\u064e\u0628\u064b\u0627",
+   "out": "\u0645\u0631\u062d\u0628\u0627",
+   "note": "arabic harakat stripped"
+  },
+  {
+   "in": "\u0639\u0640\u0640\u0640\u0631\u0628\u064a",
+   "out": "\u0639\u0631\u0628\u064a",
+   "note": "arabic tatweel dropped"
+  },
+  {
+   "in": "\ufefb",
+   "out": "\u0644\u0627",
+   "note": "arabic lam-alef presentation form"
+  },
+  {
+   "in": "\u200f\u05e9\u05dc\u05d5\u05dd\u200e",
+   "out": "\u05e9\u05dc\u05d5\u05dd",
+   "note": "bidi marks dropped"
+  },
+  {
+   "in": "\u0627\u0644\u0642\u0627\u0647\u0631\u0629",
+   "out": "\u0627\u0644\u0642\u0627\u0647\u0631\u0629",
+   "note": "arabic city"
+  },
+  {
+   "in": "\u0391\u03b8\u03ae\u03bd\u03b1",
+   "out": "\u03b1\u03b8\u03b7\u03bd\u03b1",
+   "note": "greek upper + tonos"
+  },
+  {
+   "in": "\u03a3\u039f\u03a6\u0399\u0391",
+   "out": "\u03c3\u03bf\u03c6\u03b9\u03b1",
+   "note": "greek capital sigma"
+  },
+  {
+   "in": "\u03c2",
+   "out": "\u03c3",
+   "note": "final sigma"
+  },
+  {
+   "in": "\u0395\u03bb\u03bb\u03ac\u03c2",
+   "out": "\u03b5\u03bb\u03bb\u03b1\u03c3",
+   "note": "final sigma in word"
+  },
+  {
+   "in": "\u041c\u043e\u0441\u043a\u0432\u0430",
+   "out": "\u043c\u043e\u0441\u043a\u0432\u0430",
+   "note": "cyrillic"
+  },
+  {
+   "in": "\u0401\u043b\u043a\u0430",
+   "out": "\u0435\u043b\u043a\u0430",
+   "note": "cyrillic yo diaeresis stripped"
+  },
+  {
+   "in": "\u041a\u0438\u0457\u0432",
+   "out": "\u043a\u0438\u0456\u0432",
+   "note": "ukrainian yi stripped to cyrillic i"
+  },
+  {
+   "in": "\u0419",
+   "out": "\u0438",
+   "note": "short i breve stripped"
+  },
+  {
+   "in": "e\u0301",
+   "out": "e",
+   "note": "e + combining acute"
+  },
+  {
+   "in": "Sa\u0303o Paulo",
+   "out": "sao paulo",
+   "note": "NFD tilde"
+  },
+  {
+   "in": "corac\u0327o\u0303es",
+   "out": "coracoes",
+   "note": "NFD cedilla + tilde"
+  },
+  {
+   "in": "A\u030a",
+   "out": "a",
+   "note": "A + combining ring"
+  },
+  {
+   "in": "n\u0303",
+   "out": "n",
+   "note": "n + combining tilde"
+  },
+  {
+   "in": "u\u0308\u0301",
+   "out": "u",
+   "note": "two stacked marks"
+  },
+  {
+   "in": "\u0301",
+   "out": "",
+   "note": "lone combining mark"
+  },
+  {
+   "in": "a\u20dd",
+   "out": "a",
+   "note": "enclosing circle mark"
+  },
+  {
+   "in": "x\ufe0f",
+   "out": "x",
+   "note": "variation selector"
+  },
+  {
+   "in": "Rio de Janeiro",
+   "out": "rio de janeiro",
+   "note": "city"
+  },
+  {
+   "in": "Rio de Janeiro (estado)",
+   "out": "rio de janeiro estado",
+   "note": "pt state"
+  },
+  {
+   "in": "United States",
+   "out": "united states",
+   "note": "country"
+  },
+  {
+   "in": "Estados Unidos",
+   "out": "estados unidos",
+   "note": "pt country"
+  },
+  {
+   "in": "Brasil",
+   "out": "brasil",
+   "note": "pt country"
+  },
+  {
+   "in": "S\u00e3o Tom\u00e9 e Pr\u00edncipe",
+   "out": "sao tome e principe",
+   "note": "pt country accents"
+  },
+  {
+   "in": "Guin\u00e9-Bissau",
+   "out": "guine bissau",
+   "note": "pt hyphen"
+  },
+  {
+   "in": "C\u00f4te d\u2019Ivoire",
+   "out": "cote divoire",
+   "note": "curly elision"
+  },
+  {
+   "in": "Saint-\u00c9tienne",
+   "out": "saint etienne",
+   "note": "hyphen + accent"
+  },
+  {
+   "in": "Ludwig van Beethoven",
+   "out": "ludwig van beethoven",
+   "note": "name"
+  },
+  {
+   "in": "Wolfgang Amadeus Mozart",
+   "out": "wolfgang amadeus mozart",
+   "note": "name"
+  },
+  {
+   "in": "Pel\u00e9",
+   "out": "pele",
+   "note": "short name"
+  },
+  {
+   "in": "Ant\u00f4nio Carlos Jobim",
+   "out": "antonio carlos jobim",
+   "note": "pt circumflex"
+  },
+  {
+   "in": "Ant\u00f3nio Guterres",
+   "out": "antonio guterres",
+   "note": "pt-PT acute"
+  },
+  {
+   "in": "Star Wars: Episode IV \u2013 A New Hope",
+   "out": "star wars episode iv a new hope",
+   "note": "colon and dash"
+  },
+  {
+   "in": "Harry Potter and the Philosopher's Stone",
+   "out": "harry potter and the philosophers stone",
+   "note": "possessive title"
+  },
+  {
+   "in": "Gr\u00eamio Foot-Ball Porto Alegrense",
+   "out": "gremio foot ball porto alegrense",
+   "note": "club"
+  },
+  {
+   "in": "World War II",
+   "out": "world war ii",
+   "note": "roman numerals as letters"
+  },
+  {
+   "in": "COVID-19",
+   "out": "covid 19",
+   "note": "hyphen digits"
+  },
+  {
+   "in": "Wi-Fi",
+   "out": "wi fi",
+   "note": "hyphen"
+  },
+  {
+   "in": "I/O",
+   "out": "i o",
+   "note": "slash"
+  },
+  {
+   "in": "M*A*S*H",
+   "out": "m a s h",
+   "note": "asterisks"
+  },
+  {
+   "in": "Se7en",
+   "out": "se7en",
+   "note": "digit inside"
+  },
+  {
+   "in": "Beyonc\u00e9",
+   "out": "beyonce",
+   "note": "accent"
+  },
+  {
+   "in": "\u00c6on Flux",
+   "out": "aeon flux",
+   "note": "ae ligature capital"
+  },
+  {
+   "in": "M\u00f6tley Cr\u00fce",
+   "out": "motley crue",
+   "note": "metal umlaut"
+  },
+  {
+   "in": "\u04aa",
+   "out": "\u04ab",
+   "note": "cyrillic letter without decomposition lowercases"
+  },
+  {
+   "in": "\udbff\udfff",
+   "out": "",
+   "note": "U+10FFFF alone folds to empty (the prefix-range sentinel is never emitted)"
+  },
+  {
+   "in": "ab\udbff\udfff",
+   "out": "ab",
+   "note": "U+10FFFF inside a string is dropped (sentinel)"
+  },
+  {
+   "in": "\udbff\udfffz",
+   "out": "z",
+   "note": "U+10FFFF before a letter is dropped (sentinel)"
+  },
+  {
+   "in": "A\ud800b",
+   "out": "a\ud800b",
+   "note": "lone high surrogate passes through unchanged (Dart strings can hold one; the builder never stores one)"
+  },
+  {
+   "in": "\udc00",
+   "out": "\udc00",
+   "note": "lone low surrogate alone passes through unchanged"
+  }
+ ]
+}

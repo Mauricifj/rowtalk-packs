@@ -1,0 +1,80 @@
+{
+ "fold_version": 1,
+ "description": "Prefix-range vectors for the suggestion recipe in SCHEMA.md. For each case, the BINARY-collated scan `key >= prefix AND key < prefix || U+10FFFF` over `keys` must return exactly `matches` (in key order). The keys include astral (U+1F600, U+20000) and high-BMP (U+FFEF, U+FFFD) continuations, so an implementation that uses U+FFFF (or any BMP 'max char') as the sentinel FAILS here. The builder's tests assert this file; the app's tests must assert the same file.",
+ "sentinel": "U+10FFFF",
+ "keys": [
+  "aa",
+  "ab",
+  "ab z",
+  "abc",
+  "ab\u4e2d",
+  "ab\uffef",
+  "ab\ufffd",
+  "ab\ud83d\ude00",
+  "ab\ud83d\ude00x",
+  "ab\ud840\udc00",
+  "ac",
+  "b"
+ ],
+ "cases": [
+  {
+   "prefix": "ab",
+   "matches": [
+    "ab",
+    "ab z",
+    "abc",
+    "ab\u4e2d",
+    "ab\uffef",
+    "ab\ufffd",
+    "ab\ud83d\ude00",
+    "ab\ud83d\ude00x",
+    "ab\ud840\udc00"
+   ]
+  },
+  {
+   "prefix": "ab\ud83d\ude00",
+   "matches": [
+    "ab\ud83d\ude00",
+    "ab\ud83d\ude00x"
+   ]
+  },
+  {
+   "prefix": "ab\uffef",
+   "matches": [
+    "ab\uffef"
+   ]
+  },
+  {
+   "prefix": "ab\ufffd",
+   "matches": [
+    "ab\ufffd"
+   ]
+  },
+  {
+   "prefix": "a",
+   "matches": [
+    "aa",
+    "ab",
+    "ab z",
+    "abc",
+    "ab\u4e2d",
+    "ab\uffef",
+    "ab\ufffd",
+    "ab\ud83d\ude00",
+    "ab\ud83d\ude00x",
+    "ab\ud840\udc00",
+    "ac"
+   ]
+  },
+  {
+   "prefix": "abc",
+   "matches": [
+    "abc"
+   ]
+  },
+  {
+   "prefix": "zz",
+   "matches": []
+  }
+ ]
+}

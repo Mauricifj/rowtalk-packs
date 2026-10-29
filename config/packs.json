@@ -1,0 +1,164 @@
+{
+  "config_version": 1,
+  "user_agent": "RowtalkPacksBuilder/1.0 (+https://github.com/Mauricifj/rowtalk-packs; offline knowledge packs for the Rowtalk app)",
+  "github": {
+    "repository": "Mauricifj/rowtalk-packs",
+    "asset_url_template": "https://github.com/{repository}/releases/download/{tag}/{asset}",
+    "manifest_path": "manifest.json",
+    "editions_dir": "editions"
+  },
+  "dump": {
+    "base_url": "https://dumps.wikimedia.org/other/cirrus_search_index/",
+    "max_connections_per_run": 2,
+    "connections_per_job": 2,
+    "socket_timeout_s": 60,
+    "read_chunk_bytes": 1048576,
+    "decompress_batch_bytes": 4194304,
+    "retry": {
+      "max_attempts_per_shard": 30,
+      "max_attempts_without_progress": 5,
+      "progress_reset_bytes": 1048576,
+      "backoff_initial_s": 2,
+      "backoff_max_s": 60,
+      "max_full_restarts_per_shard": 2,
+      "retry_after_max_s": 900,
+      "retry_after_budget_s": 3600
+    },
+    "listing_retry": {
+      "max_attempts": 5,
+      "backoff_initial_s": 2,
+      "backoff_max_s": 30,
+      "retry_after_max_s": 300,
+      "retry_after_budget_s": 900,
+      "run_deadline_s": 420
+    },
+    "dates_to_scan": 8
+  },
+  "abstract": {
+    "max_chars": 600,
+    "ellipsis": "…",
+    "shared_abbreviations": ["mr", "mrs", "ms", "messrs", "mme", "mlle", "msgr", "mgr", "pvt", "cpl", "sgt", "lt", "col", "gen", "capt", "cmdr", "adm", "maj", "hon", "rev", "fr", "sr", "sra", "jr", "dr", "dra", "prof", "st", "vs", "bros", "inc", "ltd", "co", "corp", "pte", "plc", "llc", "gmbh", "cia", "ltda", "assoc", "intl", "profa", "aprox", "approx", "sept"],
+    "shared_not_abbreviations": ["press", "corps"]
+  },
+  "aliases": {
+    "max_per_article": 8,
+    "min_key_chars": 2
+  },
+  "search": {
+    "suggestions": 8,
+    "min_query_chars": 2,
+    "heavy_prefix_rows": 1000
+  },
+  "staging": {
+    "prune_every": 200000,
+    "batch": 5000
+  },
+  "sanity": {
+    "tolerance": 0.15
+  },
+  "retention": {
+    "wiki_keep_editions": 3,
+    "dict_keep_previous": 1
+  },
+  "wiki": {
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "attribution": "Wikipedia contributors",
+    "min_popularity_presence": 0.5,
+    "build_timeout_minutes": 345,
+    "languages": {
+      "pt": {
+        "wiki": "ptwiki",
+        "site": "https://pt.wikipedia.org/",
+        "tiers": {
+          "essential": 50000,
+          "extended": 300000
+        },
+        "redirect_markers": ["#REDIRECIONAMENTO", "#REDIRECT"],
+        "disambiguation": {
+          "title_suffixes": ["(desambiguação)", "(desambiguacao)"],
+          "categories": ["Desambiguação", "!Desambiguações", "Desambiguações"],
+          "templates": ["Predefinição:Desambiguação", "Predefinição:Desambig", "Predefinição:Dab"]
+        },
+        "abbreviations": ["sr", "sra", "dr", "dra", "prof", "profa", "st", "sto", "sta", "av", "n", "nº", "séc", "sec", "jr", "etc", "ca", "aprox", "eng", "pe", "gen", "cel", "cap", "ten", "dep", "gov", "sen", "pres", "arq", "art", "cia", "ltda", "vol", "pág", "pag", "fig", "cf", "ed", "op"],
+        "sentence_starters": ["O", "A", "Os", "As", "Um", "Uma", "É", "Em", "No", "Na", "Nos", "Nas", "Foi", "Era", "Ele", "Ela", "Eles", "Elas", "Seu", "Sua", "Seus", "Suas", "Este", "Esta", "Esse", "Essa", "Isso", "Isto", "Também", "Hoje", "Atualmente", "Durante", "Após", "Depois", "Desde", "Com", "Por", "Entre", "Além", "Apesar", "Segundo", "Mais", "Outros", "Outras", "Muitos", "Ao", "Aos", "Até", "Localizado", "Localizada", "Situado", "Situada", "Localiza-se", "Situa-se", "Fundado", "Fundada", "Nascido", "Nascida", "Conhecido", "Conhecida", "Criado", "Criada", "Considerado", "Considerada", "Possui", "Tem", "Fica", "Faz", "Pertence"],
+        "not_abbreviations": ["Sul", "Pará", "Acre", "Rio", "Irã", "Peru", "Cuba", "Mali", "Roma", "Lima", "Oslo", "Goa"],
+        "golden": [
+          {"mode": "exact", "query": "brasil", "expect_title": "Brasil", "within": 1},
+          {"mode": "prefix", "query": "rio de j", "expect_title": "Rio de Janeiro", "within": 8},
+          {"mode": "prefix", "query": "portu", "expect_title": "Portugal", "within": 8}
+        ],
+        "first_edition": {
+          "essential": {"min_articles": 45000, "min_installed_bytes": 8000000, "max_installed_bytes": 80000000},
+          "extended": {"min_articles": 250000, "min_installed_bytes": 40000000, "max_installed_bytes": 400000000}
+        }
+      },
+      "en": {
+        "wiki": "enwiki",
+        "site": "https://en.wikipedia.org/",
+        "tiers": {
+          "essential": 100000,
+          "extended": 1000000
+        },
+        "redirect_markers": ["#REDIRECT"],
+        "disambiguation": {
+          "title_suffixes": ["(disambiguation)"],
+          "categories": ["All disambiguation pages", "Disambiguation pages", "All article disambiguation pages"],
+          "templates": ["Template:Disambiguation", "Template:Dmbox", "Template:Disambig", "Template:Dab", "Template:Hndis", "Template:Geodis", "Template:Set index article"]
+        },
+        "abbreviations": ["mr", "mrs", "ms", "dr", "st", "jr", "sr", "prof", "vs", "etc", "no", "ca", "c", "inc", "ltd", "co", "mt", "ft", "gen", "col", "lt", "sgt", "rev", "approx", "est", "fl", "b", "d", "jan", "feb", "mar", "apr", "jun", "jul", "aug", "sep", "sept", "oct", "nov", "dec", "gov", "sen", "rep", "pres", "capt", "cmdr", "adm", "maj", "hon", "fr", "bros", "corp", "dept", "univ", "op", "vol", "pp", "fig", "ch", "cf", "ed", "ave", "blvd"],
+        "sentence_starters": ["The", "A", "An", "It", "Its", "In", "On", "At", "As", "By", "For", "From", "With", "He", "She", "His", "Her", "They", "Their", "This", "These", "That", "Those", "There", "After", "Before", "During", "Since", "Following", "Although", "While", "When", "Today", "However", "Some", "Many", "Most", "Other", "Both", "Also", "According", "Located", "Situated", "Founded", "Established", "Born", "Known", "Named", "Built", "Formed", "Created", "Originally", "Formerly", "Currently"],
+        "not_abbreviations": ["Ohio", "Iowa", "Utah", "Peru", "Iran", "Iraq", "Cuba", "Mali", "Chad", "Oman", "Laos", "Fiji", "Rome", "Lima", "Oslo", "Asia", "Gaza"],
+        "golden": [
+          {"mode": "exact", "query": "united states", "expect_title": "United States", "within": 1},
+          {"mode": "prefix", "query": "rio de j", "expect_title": "Rio de Janeiro", "within": 8},
+          {"mode": "prefix", "query": "brazi", "expect_title": "Brazil", "within": 8}
+        ],
+        "first_edition": {
+          "essential": {"min_articles": 90000, "min_installed_bytes": 15000000, "max_installed_bytes": 150000000},
+          "extended": {"min_articles": 900000, "min_installed_bytes": 150000000, "max_installed_bytes": 900000000}
+        }
+      }
+    }
+  },
+  "dict": {
+    "max_senses": 10,
+    "max_synonyms": 5,
+    "max_example_len": 120,
+    "examples_on_first_n_senses": 1,
+    "max_definition_len": 300,
+    "max_lemma_words": 2,
+    "languages": {
+      "en": {
+        "label": "Open English WordNet",
+        "upstream_repo": "globalwordnet/english-wordnet",
+        "asset_pattern": "^english-wordnet-\\d{4}\\.xml\\.gz$",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "Open English WordNet (McCrae et al.), a fork of Princeton WordNet 3.0 (Princeton University)",
+        "golden": [
+          {"mode": "exact", "query": "house", "expect_title": "house", "within": 1},
+          {"mode": "prefix", "query": "hous", "expect_title": "house", "within": 8}
+        ],
+        "first_edition": {
+          "standard": {"min_articles": 100000, "min_installed_bytes": 10000000, "max_installed_bytes": 60000000}
+        }
+      },
+      "pt": {
+        "label": "OpenWordnet-PT",
+        "upstream_repo": "own-pt/openWordnet-PT",
+        "asset_pattern": "^own-pt-[0-9.]+\\.tar\\.xz$",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "attribution": "OpenWordnet-PT (de Paiva, Rademaker, de Melo), based on Princeton WordNet 3.0 (Princeton University)",
+        "golden": [
+          {"mode": "exact", "query": "casa", "expect_title": "casa", "within": 1},
+          {"mode": "prefix", "query": "cas", "expect_title": "casa", "within": 8}
+        ],
+        "first_edition": {
+          "standard": {"min_articles": 20000, "min_installed_bytes": 2000000, "max_installed_bytes": 20000000}
+        }
+      }
+    }
+  }
+}

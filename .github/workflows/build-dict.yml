@@ -1,0 +1,156 @@
+name: build-dict
+
+# Dictionary packs (dict-en from Open English WordNet, dict-pt from
+# OpenWordnet-PT). Quarterly: asks each upstream repository for its latest
+# release (two API calls) and exits early unless that version is not yet
+# published here. Sources are downloaded only inside this job.
+#
+# Recovering from a bad dictionary edition (DC4-03): `rebuild` publishes a
+# corrected build of the same upstream version as a new revision; when the
+# upstream content itself is bad (a rebuild reproduces it), `rollback_to`
+# re-points dict-<lang> at the family's previous edition, which retention
+# keeps for exactly this (one per dict family).
+
+on:
+  schedule:
+    - cron: "41 5 7 1,4,7,10 *"
+  workflow_dispatch:
+    inputs:
+      langs:
+        description: Languages (comma-separated). With rebuild, EVERY language listed is rebuilt as a new revision; name only the one to fix
+        type: string
+        default: "en,pt"
+      rebuild:
+        description: Publish a corrected build of an already published upstream version as a NEW revision tag, for every language in langs (gate still enforced)
+        type: boolean
+        default: false
+      force:
+        description: Publish past a failed sanity gate (never replaces a named edition)
+        type: boolean
+        default: false
+      dry_run:
+        description: Build and validate only (with rollback_to, verify the target and show the manifest change, commit nothing)
+        type: boolean
+        default: false
+      rollback_to:
+        description: Re-point dict-<lang> at this kept edition tag (dict-<lang>-...) and build nothing
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rowtalk-packs-publish
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  dict:
+    if: ${{ !inputs.rollback_to }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write # creates releases and commits manifest.json
+    steps:
+      - name: Refuse to publish from a ref other than main
+        # OPS-2: a non-dry-run decides which releases are orphans; it must
+        # run main's code against main's manifest. Test branches: dry_run.
+        if: ${{ !inputs.dry_run && github.ref != 'refs/heads/main' }}
+        run: |
+          echo "::error::publishing runs only from main (this run: $GITHUB_REF); dispatch with dry_run to test a branch"
+          exit 1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Resolve, build, verify, publish
+        id: dict
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LANGS: ${{ inputs.langs || 'en,pt' }}
+          REBUILD: ${{ inputs.rebuild && '--rebuild' || '' }}
+          FORCE: ${{ inputs.force && '--force' || '' }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          python -m rowtalk_packs dict-run --langs "$LANGS" --work "$RUNNER_TEMP/dict" \
+            --release-log "$RUNNER_TEMP/releases.txt" $REBUILD $FORCE $DRY_RUN
+      - name: Commit manifest and editions log
+        # Runs even when the dict step FAILED (OPS2-05): a language that did
+        # publish must reach main although another one failed; dict-run
+        # writes `changed` before it exits non-zero.
+        if: ${{ !cancelled() && steps.dict.outputs.changed == 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json editions
+          git commit -m "chore(packs): publish dictionary packs"
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 10))
+          done
+          exit 1
+      - name: Prune superseded dictionary releases
+        if: ${{ !cancelled() && steps.dict.outputs.changed == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m rowtalk_packs prune
+      - name: Clean up this run's releases on failure
+        if: failure() || cancelled()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -s "$RUNNER_TEMP/releases.txt" ]; then
+            python -m rowtalk_packs cleanup --release-ids "$(paste -sd, "$RUNNER_TEMP/releases.txt")"
+          fi
+
+  rollback:
+    if: ${{ inputs.rollback_to }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write # commits manifest.json
+    steps:
+      - name: Refuse to publish from a ref other than main
+        # OPS-2: a non-dry-run decides which releases are orphans; it must
+        # run main's code against main's manifest. Test branches: dry_run.
+        if: ${{ !inputs.dry_run && github.ref != 'refs/heads/main' }}
+        run: |
+          echo "::error::publishing runs only from main (this run: $GITHUB_REF); dispatch with dry_run to test a branch"
+          exit 1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Re-point manifest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.rollback_to }}
+          DRY_RUN: ${{ inputs.dry_run && '--dry-run' || '' }}
+        run: |
+          # The family is the tag's own prefix (dict-<lang>-<edition>).
+          family=$(printf '%s' "$TAG" | sed -n 's/^\(dict-[a-z][a-z][a-z]\{0,1\}\)-.*/\1/p')
+          if [ -z "$family" ]; then echo "::error::not a dictionary edition tag: $TAG"; exit 1; fi
+          python -m rowtalk_packs rollback --tag "$TAG" --families "$family" $DRY_RUN
+      - name: Commit manifest and editions log
+        # OPS2-01: a dry-run rollback verifies and shows the change; it never
+        # commits (the CLI wrote nothing, and this step does not run).
+        if: ${{ !inputs.dry_run }}
+        env:
+          TAG: ${{ inputs.rollback_to }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json editions
+          git commit -m "chore(packs): roll dictionary back to ${TAG}"
+          for attempt in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 10))
+          done
+          exit 1

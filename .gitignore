@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Build outputs — packs are published as release assets, never committed
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.db.gz
+*.json.bz2
+*.part
+*.tmp
+out/
+work/
+shards/
+bench/
+test.log
+
+# OS / editors
+.DS_Store
+._*
+.idea/
+.vscode/
