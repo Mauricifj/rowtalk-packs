@@ -1,4 +1,60 @@
 {
   "manifest_version": 2,
-  "packs": []
+  "updated_at": "2026-10-29T19:27:40Z",
+  "packs": [
+    {
+      "id": "dict-en",
+      "kind": "dict",
+      "language": "en",
+      "version": 2025123100,
+      "sizeBytes": 9397782,
+      "sha256": "63f29889df9d2206220f00765d278154eaf17b5cf3798d9ecafcd05e5ae288a0",
+      "url": "https://github.com/Mauricifj/rowtalk-packs/releases/download/dict-en-2025-edition/dict-en.db.gz",
+      "family": "dict-en",
+      "tier": "standard",
+      "edition": "2025-edition",
+      "tag": "dict-en-2025-edition",
+      "schema_version": 2,
+      "fold_version": 1,
+      "encoding": "gzip",
+      "installed_bytes": 26320896,
+      "installed_sha256": "4fb37d99cb4557460dc08679cfadd3e834c462d7e50ea89213d42418604e0c25",
+      "article_count": 120776,
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Open English WordNet (McCrae et al.), a fork of Princeton WordNet 3.0 (Princeton University)",
+      "source": {
+        "name": "Open English WordNet",
+        "url": "https://github.com/globalwordnet/english-wordnet/releases/download/2025-edition/english-wordnet-2025.xml.gz",
+        "version": "2025-edition"
+      }
+    },
+    {
+      "id": "dict-pt",
+      "kind": "dict",
+      "language": "pt",
+      "version": 2026041900,
+      "sizeBytes": 1599838,
+      "sha256": "dca26abaffab233514553efd529fa376603bbeb8801b6fc5dcb06f8c9c2a4333",
+      "url": "https://github.com/Mauricifj/rowtalk-packs/releases/download/dict-pt-v1.1.0/dict-pt.db.gz",
+      "family": "dict-pt",
+      "tier": "standard",
+      "edition": "v1.1.0",
+      "tag": "dict-pt-v1.1.0",
+      "schema_version": 2,
+      "fold_version": 1,
+      "encoding": "gzip",
+      "installed_bytes": 4263936,
+      "installed_sha256": "d008d582a6b094b10d2db7fc8de083fe30d7b463fe96777710f3997a73ac0e1d",
+      "article_count": 28290,
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "OpenWordnet-PT (de Paiva, Rademaker, de Melo), based on Princeton WordNet 3.0 (Princeton University)",
+      "source": {
+        "name": "OpenWordnet-PT",
+        "url": "https://github.com/own-pt/openWordnet-PT/releases/download/v1.1.0/own-pt-2026.04.07.tar.xz",
+        "version": "v1.1.0"
+      }
+    }
+  ]
 }
